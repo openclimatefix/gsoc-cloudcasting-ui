@@ -1,0 +1,3 @@
+- Add sentry to the project
+- Github CICD Actions
+- Pre Commit Hooks
