@@ -1,152 +1,114 @@
-# OCF Template
+# CloudCasting UI
 
-**Starting point for OCF projects**
- 
-[![workflows badge](https://img.shields.io/github/actions/workflow/status/openclimatefix/ocf-template/ci.yml?branch=maine&color=FFD053&label=workflow)](https://github.com/openclimatefix/ocf-template/actions/workflows/ci.yml)
-[![tags badge](https://img.shields.io/github/v/tag/openclimatefix/ocf-template?include_prereleases&sort=semver&color=FFAC5F)](https://github.com/openclimatefix/ocf-template/tags)
-[![pypi badge](https://img.shields.io/pypi/v/ocf-template?&color=07BCDF)](https://pypi.org/project/ocf-template)
-[![documentation badge](https://img.shields.io/badge/docs-latest-086788)](https://openclimatefix.github.io/ocf-template/)
-[![contributors badge](https://img.shields.io/github/contributors/openclimatefix/ocf-template?color=FFFFFF)](https://github.com/openclimatefix/ocf-template/graphs/contributors)
-[![ease of contribution: easy](https://img.shields.io/badge/ease%20of%20contribution:%20easy-32bd50)](https://github.com/openclimatefix#how-easy-is-it-to-get-involved) 
-[![ease of contribution: medium](https://img.shields.io/badge/ease%20of%20contribution:%20medium-f4900c)](https://github.com/openclimatefix#how-easy-is-it-to-get-involved)
-[![ease of contribution: hard](https://img.shields.io/badge/ease%20of%20contribution:%20hard-bb2629)](https://github.com/openclimatefix#how-easy-is-it-to-get-involved)
+### An interactive cloud forecasting platform to show real-time cloud movements
 
-This section of the README should contain a brief description of the project.
-Perhaps give a short amount of context around why it exists; the problem it solves.
-By the end of reading this short paragraph, a contributor should not be confused
-as to the purpose of the repository and its role in the organisation.
+The code is as open source as we can possibly make it (safely) and is powered by satellite imagery, machine learning, and an advanced prediction API.
 
-They might even have an idea of how it could be useful to them!
+> This project was developed as part of Google Summer of Code 2025 with Open Climate Fix. Student Developer: [Suvan Banerjee](https://github.com/suvanbanerjee) | Mentors: [Brad Fulford](https://github.com/braddf) | Project Timeline: May-August 2024 | [GSoC Project Page](https://summerofcode.withgoogle.com/programs/2025/projects/GXFLZMmW)
 
-> [!Note]
-> Any important callouts (informing visitors this repository is in early
-> design stages, or not for general use, or requires a lot of prerequisite
-> knowledge or infrastructure) should be placed in a note like this.
-> Like: This repository does not hold template workflows, contributing
-> guides, etc - head to
-> [OCF's .github repository](https://github.com/openclimatefix/.github)
-> for those.
+## Cloud Movement Prediction
 
+CloudCasting UI is a web application developed for visualizing and predicting cloud movements up to 3 hours ahead with updates every 15 minutes. The platform helps grid operators, solar farms, and smart home owners optimize energy usage through precise short-term forecasting.
 
-## Installation
+The term "nowcasting" refers to forecasting for the next few hours using statistical techniques and machine learning models on near-real-time data.
 
-How to install the project for *general use* (**not** for development), so:
-"`pip install x`", or: "pull the latest checkpoint from `y`";
-**not**: "clone the repo and run `make install`".
-For example, to "install" this template as the basis of a new repository,
-do the following:
+## Why is this project important?
 
-1. Click **Use this template** (in green) above the upper right of this file
-2. Select **Create a new repository**
-3. Create the new repository as desired
+Better cloud movement prediction directly impacts renewable energy efficiency:
 
+1. Grid operators can better anticipate fluctuations in solar generation
+2. Solar farm operators can optimize energy trading and maintenance scheduling
+3. Smart home systems can time energy-intensive tasks to coincide with optimal solar conditions
 
-## Example usage
+As a rough estimate, improved solar forecasting across global energy markets could reduce CO2 emissions by hundreds of millions of tonnes by 2035 by reducing the need for carbon-intensive backup power generation.
 
-One or two short examples of using the project to solve a problem.
-Quick happy-path examples that show the project in action or outline a
-common use case.
+## Tech Stack
 
-> [!Note]
-> If the project does not have a clear usage pattern, consider informing the
-> user as such in the first callout. Then you can skip *Installation* and
-> *Example usage* - perhaps replacing them with a *Quickstart* section -
-> or just moving straight on to *Development*.
+- **Framework:** [Next.js 15](https://nextjs.org/) with App Router
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) v4
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/) with Auth0
+- **Mapping:** [Mapbox GL](https://docs.mapbox.com/mapbox-gl-js/)
+- **Testing:** Jest and React Testing Library
 
-Once you have installed the project into a new GitHub repository,
-`git clone` it and `cd` into the created directory.
+## Getting Started
 
-**For a Python project:**
+### Prerequisites
 
-1. Modify the `pyproject.toml` file, updating the name, description, authors,
-and dependencies as needed.
-2. Update the name of the package from `ocf_template` to your package name.
-3. Install the project in editable mode (in a new virtual environment!)
-with `pip install -e .`.
+- Node.js 20+
+- npm or yarn
+- Mapbox API key
+- Auth0 account and credentials
 
-Also, importantly, update this README!
+### Environment Setup
 
-**For other projects:**
+Create `.env.local` file with the following variables:
 
-Simply delete `src` and `pyproject.toml`, and just use and update the README
-part of the template as required.
+```
+# NextAuth Configuration
+NEXTAUTH_SECRET=your_random_secret
+NEXTAUTH_URL=http://localhost:3000
 
+# Auth0 Configuration
+AUTH0_SECRET=your_random_secret
+AUTH0_ISSUER_BASE_URL=https://your-tenant.region.auth0.com
+AUTH0_CLIENT_ID=your_auth0_client_id
+AUTH0_CLIENT_SECRET=your_auth0_client_secret
+AUTH0_BASE_URL=http://localhost:3000
+AUTH0_SCOPE=openid profile email
 
-When your project is up and running, add any relevant workflows from OCF's
-template workflows or otherwise. See
-[Choosing and using a workflow template](https://docs.github.com/en/actions/writing-workflows/using-workflow-templates#choosing-and-using-a-workflow-template)
-for more details.
+# Mapbox Configuration
+NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_token
+```
 
-*For more information, head to the [Documentation](#documentation).*
+### Installation
 
+```bash
+# Install dependencies
+npm install
 
-## Documentation
+# Run development server with Turbopack
+npm run dev
 
-Link to the project's documentation, if it exists. Also consider internal
-linking to parts of interest of the documentation, such as **Development**,
-**API**, **Configuration** and so on.
+# Start production server
+npm run start
+```
 
+## Project Structure
 
-## FAQ
+- `app` - Next.js App Router pages and API routes
+- `components` - Reusable UI components
+- `hooks` - Custom React hooks
+- `utils` - Utility functions
+- `types` - TypeScript type definitions
+- `__test__` - Jest test files
 
-Any major points from github discussions, or highlights from the documentation.
-If the same question is often asked, answer it in here!
+## Authentication
 
-### Can I leave this section out?
+Authentication is handled via Auth0 integration with NextAuth.js. Protected routes use the `withAuth` HOC to redirect unauthenticated users to the login page.
 
-Yes, this is an optional section.
+## Features
 
-### Is "How do I run the application" a valid FAQ question?
+- **Interactive Map**: Visualizes cloud movements using Mapbox GL
+- **Authentication**: Secure login via Auth0
+- **Responsive Design**: Works across different device sizes
+- **Dark Mode**: Optimized for viewing satellite imagery
+- **Time-series Forecasting**: View predicted cloud positions at 15-minute intervals
 
-No, that should be in example usage!
+## Development Workflow
 
-### How should I format the FAQ section?
+- `npm run lint` - Run ESLint for code linting
+- `npm run format` - Run Prettier for code formatting
+- `npm run lint-format` - Run both linting and formatting
+- `npm run test` - Run Jest tests
+- `npm run test:watch` - Run Jest in watch mode
 
-Like this! Questions in level three headings, answers in plain text.
+## Contributing
 
+We welcome contributions to the CloudCasting UI project! Whether it's fixing bugs, improving documentation, or adding new features, your help is appreciated.
 
-## Development
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-Anything specific to getting set up for development on the project: required libraries,
-infrastructure, extra tools that may be desired ([MyPy](https://mypy.readthedocs.io/en/stable/),
-[pre-commit](https://pre-commit.com/), etc). Also, how to run tests!
+## Learn More
 
-Make sure you have the most up to date drivers for your 32 GPU array to use this template! 
-
-> [!Note]
-> The development section might be contained within the documentation, in which case
-> remove the *Development* section, and instead specify links to the relevant parts
-> of the documentation in the *Documentation* section.
-
-### Running the test suite
-
-The couple of commands, and perhaps additional dependencies, to run the test suite of
-the application or service. 
- 
-
-## Contributing and community
-
-[![issues badge](https://img.shields.io/github/issues/openclimatefix/ocf-template?color=FFAC5F)](https://github.com/openclimatefix/ocf-template/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
-
-- PR's are welcome! See the [Organisation Profile](https://github.com/openclimatefix) for details on contributing
-- Find out about our other projects in the [here](https://github.com/openclimatefix/.github/tree/main/profile)
-- Check out the [OCF blog](https://openclimatefix.org/blog) for updates
-- Follow OCF on [LinkedIn](https://uk.linkedin.com/company/open-climate-fix)
-
-
-## Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
----
-
-*Part of the [Open Climate Fix](https://github.com/orgs/openclimatefix/people) community.*
-
-[![OCF Logo](https://cdn.prod.website-files.com/62d92550f6774db58d441cca/6324a2038936ecda71599a8b_OCF_Logo_black_trans.png)](https://openclimatefix.org)
+- [Cloudcasting](https://www.openclimatefix.org/work/cloudcasting)
+- [Open Climate Fix](https://openclimatefix.org/)
