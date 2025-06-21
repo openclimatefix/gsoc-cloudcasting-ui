@@ -11,7 +11,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Cloudcasting UI',
   description:
-    'Next Generation Model to predict the movement of clouds 3Hrs in advance ny Open Climate Fix',
+    'Next Generation Model to predict the movement of clouds 3Hrs in advance by Open Climate Fix',
 };
 
 export default function RootLayout({
