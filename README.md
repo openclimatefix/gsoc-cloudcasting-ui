@@ -57,7 +57,17 @@ AUTH0_BASE_URL=http://localhost:3000
 AUTH0_SCOPE=openid profile email
 
 # Mapbox Configuration
+```
+
 NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_token
+AUTH0_CLIENT_ID=your_auth0_client_id
+AUTH0_CLIENT_SECRET=your_auth0_client_secret
+AUTH0_ISSUER_BASE_URL=your_auth0_domain
+AUTH0_SECRET=your_random_secret
+NEXT_PUBLIC_CLOUDCASTING_API_URL=http://localhost:8000/api/cloudcasting/layers
+
+```
+
 ```
 
 ### Installation
@@ -89,6 +99,9 @@ Authentication is handled via Auth0 integration with NextAuth.js. Protected rout
 ## Features
 
 - **Interactive Map**: Visualizes cloud movements using Mapbox GL
+- **Real-time Cloud Layers**: Fetch and display satellite imagery in multiple spectral bands (IR, VIS, WV)
+- **Time-series Forecasting**: View predicted cloud positions at 15-minute intervals up to 3 hours ahead
+- **Variable Selection**: Choose from 10 different satellite bands for cloud analysis
 - **Authentication**: Secure login via Auth0
 - **Responsive Design**: Works across different device sizes
 - **Dark Mode**: Optimized for viewing satellite imagery
