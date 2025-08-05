@@ -19,7 +19,16 @@ const Header = () => {
   return (
     <div className="p-4 bg-black text-white flex items-center justify-between">
       <div className="font-bold text-xl">
-        <Link href="/">CloudCasting</Link>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145 50" fill="none" className="h-8">
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="4.5"
+            d="m37.947 46.703 21.74-21.85-21.74-21.85M24.361 3 2.622 24.85l21.74 21.85M94.9 3 73.161 24.85l21.74 21.85M131.059 3 109.32 24.85l21.739 21.85M129.174 26.845l12.755-12.755"
+          ></path>
+        </svg>
+        {/* <Link href="/">CloudCasting</Link> */}
       </div>
 
       <div className="relative">
