@@ -21,6 +21,8 @@ const HomePage = () => {
         [11, 73] // Northeast coordinates (UK northeast corner)
       );
 
+      console.log('Initializing Mapbox GL JS with bounds:', bounds);
+
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/dark-v11',
