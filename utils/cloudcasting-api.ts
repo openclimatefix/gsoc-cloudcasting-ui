@@ -29,7 +29,7 @@ export const CLOUD_VARIABLES: CloudVariable[] = [
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_CLOUDCASTING_API_URL ||
-  'http://13.62.52.118:8000/api/cloudcasting/layers';
+  'http://51.20.136.254:8000/api/cloudcasting/layers';
 const MAX_TIME_STEPS = 12; // 3 hours with 15-minute intervals
 
 export class CloudCastingAPI implements CloudLayerAPI {
