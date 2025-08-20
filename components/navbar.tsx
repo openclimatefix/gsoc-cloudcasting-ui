@@ -1,20 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../hooks/useAuth';
 import Image from 'next/image';
-import Link from 'next/link';
 
 const Header = () => {
   const router = useRouter();
   const [showPopup, setShowPopup] = useState(false);
   const { user, isAuthenticated, signOut } = useAuth();
+  const popupRef = useRef<HTMLDivElement>(null);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setShowPopup(false);
+      }
+    };
+
+    if (showPopup) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPopup]);
 
   return (
     <div className="p-4 bg-black text-white flex items-center justify-between">
@@ -31,7 +47,7 @@ const Header = () => {
         {/* <Link href="/">CloudCasting</Link> */}
       </div>
 
-      <div className="relative">
+      <div className="relative" ref={popupRef}>
         <button
           onClick={togglePopup}
           className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 hover:bg-gray-400 transition"
@@ -52,17 +68,8 @@ const Header = () => {
 
         {showPopup && (
           <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-2 z-10">
-            <div className="px-4 py-2 text-sm text-gray-700 font-semibold">Links</div>
             <a
-              href="https://documentation.example.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              Documentation
-            </a>
-            <a
-              href="https://contact.example.com"
+              href="mailto:support@quartz.solar"
               target="_blank"
               rel="noopener noreferrer"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -70,7 +77,7 @@ const Header = () => {
               Contact
             </a>
             <a
-              href="https://feedback.example.com"
+              href="https://forms.gle/boBNEab5u99ug5ReA"
               target="_blank"
               rel="noopener noreferrer"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

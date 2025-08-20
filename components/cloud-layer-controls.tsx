@@ -17,7 +17,6 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
   const [selectedVariable, setSelectedVariable] = useState('IR_016');
   const [timeStep, setTimeStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentLayer, setCurrentLayer] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playSpeed, setPlaySpeed] = useState(1000); // milliseconds between frames
@@ -110,7 +109,6 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
       // If layer already exists, just show it
       if (map.getLayer(layerId)) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
-        setCurrentLayer(layerId);
         return;
       }
 
@@ -139,29 +137,37 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
         setIsLoading(false);
       }
 
-      // Add the new layer
-      map.addSource(layerId, {
-        type: 'image',
-        url: dataUrl,
-        coordinates,
-      });
+      // Add the new layer (only if it doesn't exist)
+      if (!map.getSource(layerId)) {
+        map.addSource(layerId, {
+          type: 'image',
+          url: dataUrl,
+          coordinates,
+        });
+      }
 
-      map.addLayer({
-        id: layerId,
-        type: 'raster',
-        source: layerId,
-        layout: {
-          visibility: 'visible',
-        },
-        paint: {
-          'raster-opacity': 0.7,
-          'raster-fade-duration': 0, // Instant transitions
-        },
-      });
+      if (!map.getLayer(layerId)) {
+        map.addLayer({
+          id: layerId,
+          type: 'raster',
+          source: layerId,
+          layout: {
+            visibility: 'visible',
+          },
+          paint: {
+            'raster-opacity': 0.7,
+            'raster-fade-duration': 0, // Instant transitions
+          },
+        });
+      } else {
+        // If layer exists, just make it visible
+        map.setLayoutProperty(layerId, 'visibility', 'visible');
+      }
 
       setLoadedLayers(prev => new Set(prev).add(layerId));
-      setCurrentLayer(layerId);
+      console.log(`Layer loaded and set as current: ${layerId}`);
     } catch (error) {
+      console.log(`Error fetching layer ${variable} at step ${step}:`, error);
       console.error('Error fetching cloud layer:', error);
       let errorMessage = 'Failed to load cloud layer';
 
@@ -215,13 +221,15 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
         }
 
         // Create the layer if it doesn't exist
-        if (!map.getLayer(layerId)) {
+        if (!map.getSource(layerId)) {
           map.addSource(layerId, {
             type: 'image',
             url: result.dataUrl,
             coordinates: result.coordinates,
           });
+        }
 
+        if (!map.getLayer(layerId)) {
           map.addLayer({
             id: layerId,
             type: 'raster',
@@ -248,7 +256,7 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
     const currentLayerId = createLayerId(selectedVariable, timeStep);
     if (map.getLayer(currentLayerId)) {
       map.setLayoutProperty(currentLayerId, 'visibility', 'visible');
-      setCurrentLayer(currentLayerId);
+      console.log(`Preload complete. Current layer set to: ${currentLayerId}`);
     }
 
     setIsLoading(false);
@@ -421,9 +429,27 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
   const cachedSteps = Array.from(cache.keys()).filter(key =>
     key.startsWith(selectedVariable)
   ).length;
+  console.log(cachedSteps);
 
   return (
     <>
+      {/* Error Display */}
+      {error && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-30 bg-red-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">⚠️</span>
+            <span className="text-sm">{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="text-white hover:text-red-200 ml-2"
+              aria-label="Dismiss error"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Dock-style Timeline Bar */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-20">
         <div className="bg-black/70 backdrop-blur-sm rounded-xl shadow-lg px-3 py-2 flex items-center gap-3">
@@ -441,20 +467,20 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
               title="Previous frame (Left Arrow)"
             >
               ◀
-              <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black/80 text-white rounded whitespace-nowrap">
+              <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 px-2 py-1 text-xs bg-black/80 text-white rounded whitespace-nowrap">
                 ← Previous
               </span>
             </button>
 
             {/* Slider */}
-            <div className="w-64 mx-2">
+            <div className="w-64 mx-2 slider-holder-yellow">
               <input
                 type="range"
                 min="0"
                 max={maxTimeSteps - 1}
                 value={timeStep}
                 onChange={e => setTimeStep(parseInt(e.target.value))}
-                className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
                 disabled={isLoading}
                 style={{
                   background: `linear-gradient(to right, #ffd500ff 0%, #ffd500ff ${(timeStep / (maxTimeSteps - 1)) * 100}%, #374151 ${(timeStep / (maxTimeSteps - 1)) * 100}%, #374151 100%)`,
@@ -469,7 +495,7 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
               title="Next frame (Right Arrow)"
             >
               ▶
-              <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black/80 text-white rounded whitespace-nowrap">
+              <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 px-2 py-1 text-xs bg-black/80 text-white rounded whitespace-nowrap">
                 Next →
               </span>
             </button>
@@ -497,15 +523,15 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
               ) : (
                 <span className="text-sm">▶</span>
               )}
-              <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black/80 text-white rounded whitespace-nowrap">
+              <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-2 py-1 text-xs bg-black/80 text-white rounded whitespace-nowrap">
                 {isPlaying ? 'Pause (Space)' : 'Play (Space)'}
               </span>
             </button>
-            {/* {isLoading && (
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-black/75 text-white rounded whitespace-nowrap">
+            {isLoading && preloadProgress > 0 && (
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-2 py-1 text-xs bg-black/75 text-white rounded whitespace-nowrap">
                 Preloading layers... {Math.round(preloadProgress)}%
               </div>
-            )} */}
+            )}
           </div>
 
           {/* Speed Control */}
@@ -548,8 +574,8 @@ export default function CloudLayerControls({ map }: CloudLayerControlsProps) {
             >
               ⌨️
             </button>
-            <div className="hidden group-hover:block absolute bottom-full right-0 mb-2 px-3 py-2 text-xs bg-black/80 text-white rounded whitespace-nowrap z-50">
-              <div className="font-semibold mb-1">Keyboard Shortcuts:</div>
+            <div className="hidden group-hover:block absolute bottom-full right-0 mb-4 px-3 py-2 text-xs bg-black/80 text-white rounded whitespace-nowrap z-50">
+              <div className="font-semibold mb-2">Keyboard Shortcuts</div>
               <div className="flex justify-between gap-4">
                 <span>Space</span>
                 <span>Play/Pause</span>
